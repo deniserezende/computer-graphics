@@ -24,7 +24,7 @@
 # - Biblioteca PIL em python
 # - Biblioteca graphics.h em C
 # - Ou qualquer outra forma de sua preferência!
-#
+
 # *Podem utilizar a forma de exibição mais simples sem problemas, pois o importante neste momento são os cálculos
 # estarem corretos. Mais a diante vamos estudar o OpenGL mais a fundo para síntese e exibição gráfica.
 
@@ -60,5 +60,5 @@ match option_int:
         MatrixTransformations.bresenhams_circle_algorithm(radius)
 
     case other:
-        logging.error('Not a option.')
+        logging.error('Not an option.')
         exit()
