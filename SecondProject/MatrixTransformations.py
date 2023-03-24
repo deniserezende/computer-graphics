@@ -3,10 +3,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+def _plot_beautify(title: str):
+    plt.figure(figsize=(8, 6))
+    plt.title(title, fontsize=18, fontweight='bold', color='steelblue', loc='left', pad=15)
+    # Add a grid
+    plt.grid(True, linestyle='--', linewidth=0.5, color='gray', zorder=-1)
+
+    # Activate a style sheet
+    plt.style.use('ggplot')
+
+
 # DDA
 def dda(x_initial, y_initial, x_final, y_final):
     """"The Digital Difference Analyzer (DDA) algorithm is used to draw lines on a screen in an incrementally."""
     logging.getLogger().setLevel(logging.INFO)
+
+    _plot_beautify("Digital Difference Analyzer plot")
 
     # Calculate delta
     delta_x = x_final-x_initial
@@ -24,9 +36,19 @@ def dda(x_initial, y_initial, x_final, y_final):
     y = y_initial
     x = x_initial
     while x < x_final:
-        plt.scatter(x=round(x), y=round(y), s=100, color='black')
+        plt.scatter(x=round(x), y=round(y), s=30, color='black')
         y = y + y_inc
         x = x + x_inc
+
+    # Set axis limits to show the graph starting at the origin
+    if min(x_initial, x_final) >= 0:
+        plt.xlim(-0.5, max(x_initial, x_final) + 1)
+    if min(y_initial, y_final) >= 0:
+        plt.ylim(-0.5, max(y_initial, y_final) + 1)
+
+    # Add axis labels
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
 
     plt.show()
 
@@ -37,9 +59,11 @@ def bresenhams_line_algorithm(x_initial, y_initial, x_final, y_final):
     that should be selected in order to form a close approximation to a straight line between two points."""
     logging.getLogger().setLevel(logging.INFO)
 
+    _plot_beautify("Bresenham's line plot")
+
     # Calculate delta
-    delta_x = x_final - x_initial
-    delta_y = y_final - x_initial
+    delta_x = abs(x_final - x_initial)
+    delta_y = abs(y_final - y_initial)
 
     # Check direction to calculate increment in x and y
     x_inc = 0
@@ -61,19 +85,32 @@ def bresenhams_line_algorithm(x_initial, y_initial, x_final, y_final):
 
     # Check octant and call function
     if delta_x >= delta_y:
-        _bla_first_octant(delta_x, delta_y, x_initial, y_initial, x_final, x_inc, y_inc)
+        _plot_line_first_octant(delta_x, delta_y, x_initial, y_initial, x_final, x_inc, y_inc)
     else:
-        _bla_second_octant(delta_x, delta_y, x_initial, y_initial, y_final, x_inc, y_inc)
+        _plot_line_second_octant(delta_x, delta_y, x_initial, y_initial, y_final, x_inc, y_inc)
+
+    # Set axis limits to show the graph starting at the origin
+    if min(x_initial, x_final) >= 0:
+        plt.xlim(-0.5, max(x_initial, x_final) + 1)
+    if min(y_initial, y_final) >= 0:
+        plt.ylim(-0.5, max(y_initial, y_final) + 1)
+
+    # Add axis labels
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
+
     plt.show()
 
 
-def _bla_first_octant(delta_x, delta_y, x_initial, y_initial, x_final, x_inc, y_inc):
+def _plot_line_first_octant(delta_x, delta_y, x_initial, y_initial, x_final, x_inc, y_inc):
     p = 2 * abs(delta_y) - abs(delta_x)
     p2 = 2 * abs(delta_y)
     xy2 = 2 * (abs(delta_y) - abs(delta_x))
     # Plot points
     y = y_initial
     x = x_initial
+    plt.scatter(x=round(x), y=round(y), s=30, color='black')
+
     while x != x_final:
         x += x_inc
 
@@ -83,10 +120,10 @@ def _bla_first_octant(delta_x, delta_y, x_initial, y_initial, x_final, x_inc, y_
             p += xy2
             y += y_inc
 
-        plt.scatter(x=round(x), y=round(y), s=100, color='black')
+        plt.scatter(x=round(x), y=round(y), s=30, color='black')
 
 
-def _bla_second_octant(delta_x, delta_y, x_initial, y_initial, y_final, x_inc, y_inc):
+def _plot_line_second_octant(delta_x, delta_y, x_initial, y_initial, y_final, x_inc, y_inc):
     p = 2 * abs(delta_x) - abs(delta_y)
     p2 = 2 * abs(delta_x)
     xy2 = 2 * (abs(delta_x) - abs(delta_y))
@@ -94,6 +131,8 @@ def _bla_second_octant(delta_x, delta_y, x_initial, y_initial, y_final, x_inc, y
     # Plot points
     y = y_initial
     x = x_initial
+    plt.scatter(x=round(x), y=round(y), s=30, color='black')
+
     while y != y_final:
         y += y_inc
 
@@ -103,21 +142,28 @@ def _bla_second_octant(delta_x, delta_y, x_initial, y_initial, y_final, x_inc, y
             p += xy2
             x += x_inc
 
-        plt.scatter(x=round(x), y=round(y), s=170, color='black')
+        plt.scatter(x=round(x), y=round(y), s=30, color='black')
 
 
 # Bresenham's circle algorithm
-def bresenhams_circle_algorithm(radius):
-    """"Bresenham Algorithm is used to reduce the calculation needed for drawing a circle by making use of
-    property of symmetry."""
+def bresenhams_circle_algorithm(radius, x_center, y_center):
+    """Bresenham's algorithm is used to reduce the calculation needed for drawing a circle by making use of
+    property of symmetry.
+
+    Args:
+        radius (int): radius of the circle
+        x_center (int): x-coordinate of the center of the circle
+        y_center (int): y-coordinate of the center of the circle
+    """
     logging.getLogger().setLevel(logging.INFO)
+
+    _plot_beautify("Bresenham's circle plot")
 
     x = 0
     y = radius
     p = 1 - radius
     while x < y:
-        # Step7: Plot eight points by using concepts of eight-way symmetry.
-        _plot_points(x, y)
+        _plot_points(x, y, x_center, y_center)
 
         x += 1
         if p < 0:
@@ -129,12 +175,12 @@ def bresenhams_circle_algorithm(radius):
     plt.show()
 
 
-def _plot_points(x, y):
-    plt.scatter(x, y, 100, 'black')
-    plt.scatter(y, x, 100, 'black')
-    plt.scatter(y, -x, 100, 'black')
-    plt.scatter(-x, y, 100, 'black')
-    plt.scatter(-x, -y, 100, 'black')
-    plt.scatter(-y, -x, 100, 'black')
-    plt.scatter(-y, x, 100, 'black')
-    plt.scatter(x, -y, 100, 'black')
+def _plot_points(x, y, x_center, y_center):
+    plt.scatter(x + x_center, y + y_center, 30, 'black')
+    plt.scatter(y + x_center, x + y_center, 30, 'black')
+    plt.scatter(y + x_center, -x + y_center, 30, 'black')
+    plt.scatter(-x + x_center, y + y_center, 30, 'black')
+    plt.scatter(-x + x_center, -y + y_center, 30, 'black')
+    plt.scatter(-y + x_center, -x + y_center, 30, 'black')
+    plt.scatter(-y + x_center, x + y_center, 30, 'black')
+    plt.scatter(x + x_center, -y + y_center, 30, 'black')

@@ -56,8 +56,10 @@ match option_int:
         MatrixTransformations.bresenhams_line_algorithm(x_initial, y_initial, x_final, y_final)
 
     case 3:
+        x = int(input(f'Enter x (circle center) = '))
+        y = int(input(f'Enter y (circle center) = '))
         radius = int(input("Enter the radius of the circle: "))
-        MatrixTransformations.bresenhams_circle_algorithm(radius)
+        MatrixTransformations.bresenhams_circle_algorithm(radius, x, y)
 
     case other:
         logging.error('Not an option.')
